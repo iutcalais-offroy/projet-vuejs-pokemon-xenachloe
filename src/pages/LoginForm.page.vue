@@ -10,33 +10,33 @@
     >
       <!-- Onglet de connexion -->
       <n-tab-pane name="signin" tab="Se connecter">
-        <n-form :model="signinForm" ref="signinForm" :rules="signinRules" label-placement="top">
+        <n-form :model="signinForm" ref="signinForm" label-placement="top">
           <n-form-item label="Nom d'utilisateur" prop="username">
-            <n-input v-model="signinForm.username" />
+            <input v-model="signinForm.username" />
           </n-form-item>
           <n-form-item label="Mot de passe" prop="password">
-            <n-input v-model="signinForm.password" type="password" />
+            <input v-model="signinForm.password" type="password" />
           </n-form-item>
         </n-form>
-        <n-button @click="signIn" type="primary" block secondary strong>
+        <n-button @click="handleSignIn" type="primary" block secondary strong>
           Se connecter
         </n-button>
       </n-tab-pane>
 
       <!-- Onglet d'inscription -->
       <n-tab-pane name="signup" tab="S'inscrire">
-        <n-form :model="signupForm" ref="signupForm" :rules="signupRules" label-placement="top">
+        <n-form :model="signupForm" ref="signupForm" label-placement="top">
           <n-form-item label="Nom d'utilisateur" prop="username">
-            <n-input v-model="signupForm.username" />
+            <input v-model="signupForm.username" />
           </n-form-item>
           <n-form-item label="Mot de passe" prop="password">
-            <n-input v-model="signupForm.password" type="password" />
+            <input v-model="signupForm.password" type="password" />
           </n-form-item>
           <n-form-item label="Confirmer le mot de passe" prop="confirmPassword">
-            <n-input v-model="signupForm.confirmPassword" type="password" />
+            <input v-model="signupForm.confirmPassword" type="password" />
           </n-form-item>
         </n-form>
-        <n-button @click="signUp" type="primary" block secondary strong>
+        <n-button @click="handleSignUp" type="primary" block secondary strong>
           S'inscrire
         </n-button>
       </n-tab-pane>
@@ -46,66 +46,56 @@
 
 <script>
 export default {
-    methods: {
-    // Fonction d'inscription
-    signUp() {
-      this.$refs.signupForm.validate().then((valid) => {
-        if (valid) {
-          
-          // Supposons que vous recevez un token d'authentification après inscription
-          const token = 'votre_token_reçu_du_backend'; // Remplacez ceci par le token réel du backend
-
-          // Sauvegarder le token dans localStorage
-          localStorage.setItem('auth_token', token);
-
-          // Rediriger après inscription réussie
-          this.$router.push('/deck-collection');
-        }
-      }).catch(() => {});
-    },
-
-    // Fonction de connexion
-    signIn() {
-      this.$refs.signinForm.validate((valid) => {
-        if (valid) {
-          // Vérifier si le token est déjà dans localStorage
-          const token = localStorage.getItem('auth_token');
-
-          if (token) {
-            // Si un token est trouvé, on peut l'utiliser pour l'authentification
-            // Par exemple, vous pouvez envoyer le token avec les requêtes API
-            // axios.post('/api/login', { token })
-            
-            // Si l'utilisateur est authentifié, rediriger vers la page de collection
-            this.$router.push('/deck-collection');
-          } else {
-            // Si le token n'est pas présent, envoyer les données de connexion au backend
-            // Exemple : axios.post('/api/login', this.signinForm)
-            
-            // Supposons que vous recevez un token d'authentification du backend
-            const token = 'votre_token_reçu_du_backend'; // Remplacez ceci par le token réel du backend
-
-            // Sauvegarder le token dans localStorage
-            localStorage.setItem('auth_token', token);
-
-            // Rediriger vers la page de collection après une connexion réussie
-            this.$router.push('/deck-collection');
-          }
-        } else {
-          // Si le formulaire est invalide, afficher une alerte ou un message d'erreur
-          console.error('Veuillez vérifier les champs du formulaire.');
-          alert('Veuillez vérifier les champs du formulaire.');
-        }
-      });
-    },
-
-    // Validation du mot de passe de confirmation (assurez-vous que les mots de passe correspondent)
-    validatePasswordConfirm(rule, value, callback) {
-      if (value !== this.signupForm.password) {
-        callback(new Error('Les mots de passe ne correspondent pas'));
-      } else {
-        callback();
+  data() {
+    return {
+      signinForm: {
+        username: '',
+        password: ''
+      },
+      signupForm: {
+        username: '',
+        password: '',
+        confirmPassword: ''
       }
+    };
+  },
+  methods: {
+    // Fonction pour gérer la connexion
+    handleSignIn() {
+      const { username, password } = this.signinForm;
+
+      // Validation des champs
+      if (!username || !password) {
+        console.log('Veuillez remplir tous les champs pour la connexion');
+        return;
+      }
+
+      // Simuler la connexion réussie
+      console.log('Connexion réussie avec:', { username, password });
+      
+      // Après une connexion réussie, redirige vers la page deck-collection (utilise le chemin défini dans router.js)
+      this.$router.push('/deck-collection');  // Utilise le chemin de la route '/deck-collection'
+    },
+
+    // Fonction pour gérer l'inscription
+    handleSignUp() {
+      const { username, password, confirmPassword } = this.signupForm;
+
+      // Validation des champs
+      if (!username || !password || !confirmPassword) {
+        console.log('Veuillez remplir tous les champs pour l\'inscription');
+        return;
+      }
+      if (password !== confirmPassword) {
+        console.log('Les mots de passe ne correspondent pas');
+        return;
+      }
+
+      // Simuler l'inscription réussie
+      console.log('Inscription réussie avec:', { username, password });
+
+      // Après une inscription réussie, redirige vers la page de connexion
+      this.$router.push('/login');  // Utilise le chemin de la route '/login'
     }
   }
 };
